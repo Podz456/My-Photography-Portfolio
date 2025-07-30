@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Photography Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define CSS variables for theme colors */
+        :root {
+            --bg-color: #f3f4f6; /* light-gray-100 */
+            --text-color: #1f2937; /* light-gray-900 */
+            --header-bg: #ffffff; /* light-white */
+            --header-text: #4b5563; /* light-gray-600 */
+            --header-logo: #1f2937; /* light-gray-800 */
+            --button-bg: #e5e7eb; /* light-gray-200 */
+            --button-text: #4b5563; /* light-gray-700 */
+            --heading-color: #1f2937; /* light-gray-800 */
+            --modal-bg: #ffffff; /* light-white */
+            --modal-text: #4b5563; /* light-gray-700 */
+        }
+
+        html.dark {
+            --bg-color: #111827; /* dark-gray-900 */
+            --text-color: #f9fafb; /* dark-gray-100 */
+            --header-bg: #1f2937; /* dark-gray-800 */
+            --header-text: #d1d5db; /* dark-gray-300 */
+            --header-logo: #e5e7eb; /* dark-gray-200 */
+            --button-bg: #374151; /* dark-gray-700 */
+            --button-text: #d1d5db; /* dark-gray-300 */
+            --heading-color: #e5e7eb; /* dark-gray-200 */
+            --modal-bg: #1f2937; /* dark-gray-800 */
+            --modal-text: #d1d5db; /* dark-gray-300 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--button-bg); /* Uses button background for track */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden; /* Ensure image doesn't overflow rounded corners */
+            background-color: var(--modal-bg);
+            color: var(--modal-text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh; /* Adjust as needed */
+            object-fit: contain;
+        }
+
+        /* Styles for elements using CSS variables */
+        header {
+            background-color: var(--header-bg);
+            transition: background-color 0.3s;
+        }
+        header a {
+            color: var(--header-text);
+            transition: color 0.3s;
+        }
+        header a.text-2xl { /* For the logo */
+            color: var(--header-logo);
+        }
+        header button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        h1 {
+            color: var(--heading-color);
+            transition: color 0.3s;
+        }
+        #close-modal {
+            color: var(--modal-text);
+            transition: color 0.3s;
+        }
+
+        /* Underline animation for nav links */
+        nav a {
+            position: relative;
+            text-decoration: none; /* Remove default underline */
+            padding-bottom: 2px; /* Space for the underline */
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: currentColor; /* Matches text color */
+            transition: width 0.3s ease-out;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="shadow-sm py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center"> <!-- Logo -->
+            <a href="#" class="text-2xl font-bold rounded-md p-2 hover:bg-gray-100 hover:bg-opacity-20 transition">
+                My Photography Portfolio
+            </a>
+        </div>
+        <nav class="hidden md:flex flex-grow justify-center space-x-3"> <!-- Nav links, centered -->
+            <a href="#" class="font-medium transition rounded-md p-2 hover:bg-gray-100 hover:bg-opacity-20">Home</a>
+            <a href="#" class="font-medium transition rounded-md p-2 hover:bg-gray-100 hover:bg-opacity-20">Prints</a>
+            <a href="#" class="font-medium transition rounded-md p-2 hover:bg-gray-100 hover:bg-opacity-20">Collections</a>
+            <a href="#" class="font-medium transition rounded-md p-2 hover:bg-gray-100 hover:bg-opacity-20">About</a>
+        </nav>
+        <div class="flex items-center space-x-2.5"> <!-- Buttons -->
+            <!-- Dark/Light Mode Toggle -->
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-opacity-20 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg id="moon-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <!-- Updated Sun Icon SVG with increased stroke-width -->
+                <svg id="sun-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2.2">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="19.07" y1="4.93" x2="17.66" y2="6.34" />
+                    <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
+                    <line x1="19.07" y1="19.07" x2="17.66" y2="17.66" />
+                    <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+                </svg>
+            </button>
+            <!-- Settings Button -->
+            <button class="p-2 rounded-full hover:bg-opacity-20 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 md:px-8 py-8">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center mb-12 mt-8">RECENT WORK</h1>
+
+        <!-- Photo Gallery Grid -->
+        <section id="gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Images will be dynamically loaded here by JavaScript -->
+        </section>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-overlay transition-opacity duration-300 opacity-0">
+        <div class="rounded-lg shadow-xl p-6 relative transform transition-transform duration-300 scale-95 modal-content">
+            <button id="close-modal" class="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-200 hover:bg-opacity-20 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <img id="modal-image-display" src="" alt="Selected Photograph" class="rounded-md mb-4 modal-image">
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <p id="image-description" class="text-center sm:text-left"></p>
+                <a id="download-button" href="#" download class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Download Photo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Array of sample photographs
+        const photographs = [
+            {
+                src: "https://placehold.co/600x400/8B4513/FFFFFF?text=Mountain+View",
+                alt: "Majestic mountain range at sunset",
+                description: "A breathtaking view of mountain peaks bathed in the warm glow of the setting sun."
+            },
+            {
+                src: "https://placehold.co/600x800/4682B4/FFFFFF?text=Forest+Path",
+                alt: "Serene forest path",
+                description: "A tranquil path winding through a dense, green forest, inviting exploration."
+            },
+            {
+                src: "https://placehold.co/600x400/6A5ACD/FFFFFF?text=Cityscape",
+                alt: "Vibrant city skyline at night",
+                description: "The dazzling lights of a bustling city reflecting on the river at twilight."
+            },
+            {
+                src: "https://placehold.co/600x800/20B2AA/FFFFFF?text=Ocean+Sunset",
+                alt: "Golden ocean sunset",
+                description: "The sun dipping below the horizon, casting a golden hue over the calm ocean waves."
+            },
+            {
+                src: "https://placehold.co/600x400/DAA520/FFFFFF?text=Desert+Landscape",
+                alt: "Arid desert landscape",
+                description: "Vast, sandy dunes under a clear blue sky, showcasing the beauty of the desert."
+            },
+            {
+                src: "https://placehold.co/600x800/CD5C5C/FFFFFF?text=Abstract+Art",
+                alt: "Colorful abstract art",
+                description: "A vibrant abstract composition with swirling colors and dynamic shapes."
+            }
+        ];
+
+        const gallery = document.getElementById('gallery');
+        const imageModal = document.getElementById('image-modal');
+        const modalImageDisplay = document.getElementById('modal-image-display');
+        const imageDescription = document.getElementById('image-description');
+        const downloadButton = document.getElementById('download-button');
+        const closeModalButton = document.getElementById('close-modal');
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        // Function to load images into the gallery
+        function loadGalleryImages() {
+            photographs.forEach((photo, index) => {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'relative group cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1';
+
+                const img = document.createElement('img');
+                img.src = photo.src;
+                img.alt = photo.alt;
+                img.className = 'w-full h-full object-cover rounded-lg transform group-hover:scale-105 transition-transform duration-300';
+                img.loading = 'lazy'; // Lazy load images
+
+                // Overlay for hover effect
+                const overlay = document.createElement('div');
+                overlay.className = 'absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg';
+                const text = document.createElement('p');
+                text.className = 'text-white text-lg font-semibold';
+                text.textContent = 'View & Download';
+                overlay.appendChild(text);
+
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(overlay);
+                gallery.appendChild(imgContainer);
+
+                // Add click listener to open modal
+                imgContainer.addEventListener('click', () => openModal(photo));
+            });
+        }
+
+        // Function to open the image modal
+        function openModal(photo) {
+            modalImageDisplay.src = photo.src;
+            modalImageDisplay.alt = photo.alt;
+            imageDescription.textContent = photo.description;
+            downloadButton.href = photo.src; // Set the download link
+            downloadButton.download = photo.alt.replace(/\s+/g, '-') + '.jpg'; // Suggest a filename
+
+            imageModal.classList.remove('hidden');
+            setTimeout(() => {
+                imageModal.classList.remove('opacity-0');
+                imageModal.querySelector('.modal-content').classList.remove('scale-95');
+            }, 10); // Small delay for transition to work
+        }
+
+        // Function to close the image modal
+        function closeModal() {
+            imageModal.classList.add('opacity-0');
+            imageModal.querySelector('.modal-content').classList.add('scale-95');
+            setTimeout(() => {
+                imageModal.classList.add('hidden');
+            }, 300); // Match transition duration
+        }
+
+        // Event listeners for modal
+        closeModalButton.addEventListener('click', closeModal);
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) { // Close if clicked on overlay
+                closeModal();
+            }
+        });
+
+        // Keyboard accessibility for modal (Escape key)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !imageModal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // Dark/Light Mode Toggle Logic
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                console.log('Theme applied: Dark. HTML class list:', document.documentElement.classList);
+            } else {
+                document.documentElement.classList.remove('dark');
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+                console.log('Theme applied: Light. HTML class list:', document.documentElement.classList);
+            }
+        }
+
+        // Load theme preference from localStorage
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            // Default to light if no preference is saved
+            applyTheme('light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                applyTheme('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                applyTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Initialize gallery on page load
+        document.addEventListener('DOMContentLoaded', loadGalleryImages);
+    </script>
+</body>
+</html>
